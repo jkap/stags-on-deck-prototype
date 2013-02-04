@@ -55,26 +55,6 @@ function love.update(dt)
   if state == "playing" then
     world:update(dt)
     time = love.timer.getTime() - startTime
-    if love.keyboard.isDown(player1.key) then
-      player1.body:applyForce(10000,0)
-      repeat
-        if math.random(10) > 8 then
-          player1.key = rightKeys[math.random(#rightKeys)]
-        else
-          player1.key = leftKeys[math.random(#leftKeys)]
-        end
-      until player1.key ~= player2.key
-    end
-    if love.keyboard.isDown(player2.key) then
-      player2.body:applyForce(-10000,0)
-      repeat
-        if math.random(10) > 8 then
-          player2.key = leftKeys[math.random(#leftKeys)]
-        else
-          player2.key = rightKeys[math.random(#rightKeys)]
-        end
-      until player2.key ~= player1.key
-    end
     if player1.body:getX() < 0 then
       win(player2)
     end
@@ -88,6 +68,14 @@ function love.update(dt)
   end
 
   loveframes.update(dt)
+end
+
+function movePlayer(player)
+  if player == player1 then
+    player1.body:applyForce(10000,0)
+  elseif player == player2 then
+    player2.body:applyForce(-10000,0)
+  end
 end
 
 function startGame()
@@ -108,6 +96,26 @@ end
 function setInitialKeys()
   player1.key = leftKeys[math.random(#leftKeys)]
   player2.key = rightKeys[math.random(#rightKeys)]
+end
+
+function setKeyForPlayer(player)
+  if player == player1 then
+    repeat
+      if math.random(10) > 8 then
+        player1.key = rightKeys[math.random(#rightKeys)]
+      else
+        player1.key = leftKeys[math.random(#leftKeys)]
+      end
+    until player1.key ~= player2.key
+  elseif player == player2 then
+    repeat
+      if math.random(10) > 8 then
+        player2.key = leftKeys[math.random(#rightKeys)]
+      else
+        player2.key = rightKeys[math.random(#leftKeys)]
+      end
+    until player1.key ~= player2.key
+  end
 end
 
 function love.draw()
@@ -139,6 +147,14 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key, unicode)
+  if key == player1.key then
+    movePlayer(player1)
+    setKeyForPlayer(player1)
+  elseif key == player2.key then
+    movePlayer(player2)
+    setKeyForPlayer(player2)
+  end
+
   loveframes.keypressed(key, unicode)
 end
 
