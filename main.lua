@@ -1,4 +1,5 @@
 function love.load()
+  require("LoveFrames")
   leftKeys = {
     "q", "w", "e", "r", "t",
     "a", "s", "d", "f", "g",
@@ -41,13 +42,23 @@ function love.load()
   player2.fixture:setRestitution(0)
   player2.name = "Player 2"
 
-  --setInitialKeys()
-
   startTime = love.timer.getTime()
+
+  addPlayButton()
 
   love.graphics.setMode(650,650,false,true,0)
 
-  require("LoveFrames")
+
+end
+
+function addPlayButton()
+  local button = loveframes.Create("button")
+  button:SetText("play")
+  button.OnClick = function(object)
+    startGame()
+    button:Remove()
+  end
+  button:SetPos(650/2, 650/2)
 end
 
 
@@ -62,9 +73,6 @@ function love.update(dt)
       win(player1)
     end
   elseif state == "win" or state == "starting" then
-    if love.keyboard.isDown(" ") then
-      startGame()
-    end
   end
 
   loveframes.update(dt)
@@ -91,6 +99,7 @@ end
 function win(winning_player)
   state = "win"
   print(winning_player.name.." wins after "..time)
+  addPlayButton()
 end
 
 function setInitialKeys()
@@ -147,12 +156,14 @@ function love.mousereleased(x, y, button)
 end
 
 function love.keypressed(key, unicode)
-  if key == player1.key then
-    movePlayer(player1)
-    setKeyForPlayer(player1)
-  elseif key == player2.key then
-    movePlayer(player2)
-    setKeyForPlayer(player2)
+  if state == "playing" then
+    if key == player1.key then
+      movePlayer(player1)
+      setKeyForPlayer(player1)
+    elseif key == player2.key then
+      movePlayer(player2)
+      setKeyForPlayer(player2)
+    end
   end
 
   loveframes.keypressed(key, unicode)
