@@ -98,7 +98,7 @@ end
 
 function win(winning_player)
   state = "win"
-  print(winning_player.name.." wins after "..time)
+  time = winning_player.name.." wins after "..time
   addPlayButton()
 end
 
