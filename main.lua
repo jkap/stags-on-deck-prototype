@@ -132,6 +132,9 @@ function love.draw()
   love.graphics.polygon("fill", player1.body:getWorldPoints(player1.shape:getPoints()))
   love.graphics.polygon("fill", player2.body:getWorldPoints(player2.shape:getPoints()))  
 
+  font = love.graphics.newFont(30)
+  love.graphics.setFont(font)
+
   if state == "playing" then
     love.graphics.print(player1.key, 100, 100)
     love.graphics.print(player2.key, 550, 100)
