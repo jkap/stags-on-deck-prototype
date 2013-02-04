@@ -16,7 +16,9 @@ function love.load()
   font = love.graphics.newFont(30)
   love.graphics.setFont(font)
 
-  state = "playing"
+  state = "starting"
+
+  devMode = true
 
   objects = {}
 
@@ -39,7 +41,7 @@ function love.load()
   player2.fixture:setRestitution(0)
   player2.name = "Player 2"
 
-  setInitialKeys()
+  --setInitialKeys()
 
   startTime = love.timer.getTime()
 
@@ -48,44 +50,55 @@ end
 
 
 function love.update(dt)
-  world:update(dt)
-  time = love.timer.getTime() - startTime
-  if love.keyboard.isDown(player1.key) then
-    player1.body:applyForce(10000,0)
-    repeat
-      if math.random(10) > 8 then
-        player1.key = rightKeys[math.random(#rightKeys)]
-      else
-        player1.key = leftKeys[math.random(#leftKeys)]
-      end
-    until player1.key ~= player2.key
-  end
-  if love.keyboard.isDown(player2.key) then
-    player2.body:applyForce(-10000,0)
-    repeat
-      if math.random(10) > 8 then
-        player2.key = leftKeys[math.random(#leftKeys)]
-      else
-        player2.key = rightKeys[math.random(#rightKeys)]
-      end
-    until player2.key ~= player1.key
-  end
-  if player1.body:getX() < 0 then
-    win(player2)
-  end
-  if player2.body:getX() > 650 then
-    win(player1)
+  if state == "playing" then
+    world:update(dt)
+    time = love.timer.getTime() - startTime
+    if love.keyboard.isDown(player1.key) then
+      player1.body:applyForce(10000,0)
+      repeat
+        if math.random(10) > 8 then
+          player1.key = rightKeys[math.random(#rightKeys)]
+        else
+          player1.key = leftKeys[math.random(#leftKeys)]
+        end
+      until player1.key ~= player2.key
+    end
+    if love.keyboard.isDown(player2.key) then
+      player2.body:applyForce(-10000,0)
+      repeat
+        if math.random(10) > 8 then
+          player2.key = leftKeys[math.random(#leftKeys)]
+        else
+          player2.key = rightKeys[math.random(#rightKeys)]
+        end
+      until player2.key ~= player1.key
+    end
+    if player1.body:getX() < 0 then
+      win(player2)
+    end
+    if player2.body:getX() > 650 then
+      win(player1)
+    end
+  elseif state == "win" or state == "starting" then
+    if love.keyboard.isDown(" ") then
+      startGame()
+    end
   end
 end
 
-function win(winning_player)
-  print(winning_player.name.." wins after "..time)
+function startGame()
+  state = "playing"  
   player1.body:setLinearVelocity(0,0)
   player2.body:setLinearVelocity(0,0)
   player1.body:setPosition(100, 650/2)
   player2.body:setPosition(650-100, 650/2)
   startTime = love.timer.getTime()
   setInitialKeys()
+end
+
+function win(winning_player)
+  state = "win"
+  print(winning_player.name.." wins after "..time)
 end
 
 function setInitialKeys()
@@ -98,7 +111,14 @@ function love.draw()
   love.graphics.polygon("fill", player1.body:getWorldPoints(player1.shape:getPoints()))
   love.graphics.polygon("fill", player2.body:getWorldPoints(player2.shape:getPoints()))  
 
-  love.graphics.print(player1.key, 100, 100)
-  love.graphics.print(player2.key, 550, 100)
-  love.graphics.print(time, 250, 100)
+  if state == "playing" then
+    love.graphics.print(player1.key, 100, 100)
+    love.graphics.print(player2.key, 550, 100)
+  end
+  if time then
+    love.graphics.print(time, 250, 100)
+  end
+  if devMode then
+    love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 10, 10)
+  end
 end
