@@ -46,6 +46,8 @@ function love.load()
   startTime = love.timer.getTime()
 
   love.graphics.setMode(650,650,false,true,0)
+
+  require("LoveFrames")
 end
 
 
@@ -84,6 +86,8 @@ function love.update(dt)
       startGame()
     end
   end
+
+  loveframes.update(dt)
 end
 
 function startGame()
@@ -121,4 +125,23 @@ function love.draw()
   if devMode then
     love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 10, 10)
   end
+
+  loveframes.draw()
+end
+
+function love.mousepressed(x,y,button)
+
+  loveframes.mousepressed(x, y, button)
+end
+
+function love.mousereleased(x, y, button)
+  loveframes.mousereleased(x, y, button)
+end
+
+function love.keypressed(key, unicode)
+  loveframes.keypressed(key, unicode)
+end
+
+function love.keyreleased(key)
+  loveframes.keyreleased(key)
 end
